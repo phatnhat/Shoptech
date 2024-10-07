@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" th:remove="tag">
+    <form th:action="@{/settings/save_payment}" method="post">
+        <div>
+            <ul class="nav nav-tabs" id="mailTemplatesTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" data-toggle="tab" href="#paypalPayment" role="tab">Paypal</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" data-toggle="tab" href="#vnpayPayment" role="tab">VNPAY</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane active p-3" id="paypalPayment" role="tabpanel">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Paypal API URL</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="PAYPAL_API_BASE_URL"
+                               th:value="${PAYPAL_API_BASE_URL}" required  />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Paypal Client ID</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="PAYPAL_API_CLIENT_ID"
+                               th:value="${PAYPAL_API_CLIENT_ID}" required  />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Paypal Client Secret</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="PAYPAL_API_CLIENT_SECRET"
+                               th:value="${PAYPAL_API_CLIENT_SECRET}" required  />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane p-3" id="vnpayPayment" role="tabpanel">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">VNPAY API URL</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="VNPAY_API_URL"
+                               th:value="${VNPAY_API_URL}" required  />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">VNPAY Pay URL</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="VNPAY_PAY_URL"
+                               th:value="${VNPAY_PAY_URL}" required  />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">VNPAY Tmn Code</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="VNPAY_TMN_CODE"
+                               th:value="${VNPAY_TMN_CODE}" required  />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">VNPAY Hash Secret</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="VNPAY_HASH_SECRET"
+                               th:value="${VNPAY_HASH_SECRET}" required  />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <input type="submit" value="Save" class="btn btn-primary m-3" />
+        </div>
+    </form>
+</div>
+</body>
+</html>

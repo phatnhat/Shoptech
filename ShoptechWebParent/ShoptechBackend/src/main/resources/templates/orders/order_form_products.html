@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div id="productList">
+            <th:block th:each="detail, status : ${order.orderDetails}">
+                <div class="border rounded p-1" th:with="product=${detail.product}" th:id="'row' + ${status.count}">
+                    <input type="hidden" name="detailId" th:value="${detail.id}">
+                    <input type="hidden" name="productId" th:value="${product.id}" class="hiddenProductId">
+                    <div class="row">
+                        <div class="col-1">
+                            <div class="divCount">[[${ status.count }]]</div>
+                            <div><a href="" class="fas fa-trash icon-dark linkRemove" th:rowNumber="${status.count}"></a></div>
+                        </div>
+                        <div class="col-3">
+                            <img th:src="@{${product.mainImagePath}}" width="200" />
+                        </div>
+                    </div>
+                    <div class="row m-2">
+                        <b>[[${ product.name }]]</b>
+                    </div>
+                    <div class="row m-2">
+                        <table>
+                            <tr>
+                                <td>Product Cost</td>
+                                <td>
+                                    <input type="text" th:value="${detail.productCost}"
+                                           name="productDetailCost"
+                                           th:rowNumber="${status.count}"
+                                           class="form-control m-1 cost-input" style="max-width: 140px;"
+                                           required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Quantity</td>
+                                <td>
+                                    <input type="number" th:value="${detail.quantity}"
+                                           name="quantity"
+                                           th:rowNumber="${status.count}"
+                                           th:id="${'quantity' + status.count}"
+                                           step="1" min="1" max="5"
+                                           class="form-control m-1 quantity-input" style="max-width: 140px;"
+                                           required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Unit Price</td>
+                                <td>
+                                    <input type="text" th:value="${detail.unitPrice}"
+                                           name="productPrice"
+                                           th:id="'price' + ${status.count}"
+                                           th:rowNumber="${status.count}"
+                                           class="form-control m-1 price-input" style="max-width: 140px;"
+                                           required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Subtotal</td>
+                                <td>
+                                    <input type="text" th:value="${detail.subtotal}"
+                                           name="productSubtotal"
+                                           th:id="${'subtotal' + status.count}"
+                                           class="form-control m-1 subtotal-output" style="max-width: 140px;"
+                                           readonly required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Shipping Cost</td>
+                                <td>
+                                    <input type="text" th:value="${detail.shippingCost}"
+                                           name="productShipCost"
+                                           class="form-control m-1 ship-input" style="max-width: 140px;"
+                                           required>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div th:id="'blankLine' + ${status.count}" class="row">&nbsp;</div>
+            </th:block>
+        </div>
+
+        <a th:href="@{/orders/search_product}" id="linkAddProduct" class="btn btn-success">Add a Product</a>
+    </div>
+</body>
+</html>

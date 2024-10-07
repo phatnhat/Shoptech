@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('Users - Shopme Admin', 'none')}">
+<body>
+<div class="container-fluid">
+  <div th:replace="~{navigation :: menu}"></div>
+  <div>
+    <h1>Manage Users</h1>
+    <a th:href="@{/users/new}" class="fas fa-user-plus fa-2x icon-dark mr-2"></a>
+    <a th:href="@{/users/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
+    <a th:href="@{/users/export/excel}" class="fas fa-file-excel fa-2x icon-dark mr-2"></a>
+    <a th:href="@{/users/export/pdf}" class="fas fa-file-pdf fa-2x icon-dark"></a>
+  </div>
+
+  <div th:replace="~{fragments :: search_form_and_message}"></div>
+
+
+  <div class="full-details">
+    <table class="table table-bordered table-striped table-hover table-responsive-xl">
+      <thead class="thead-dark">
+        <tr>
+          <th:block class="hideable-column">
+            <th th:replace="~{fragments :: column_link('id', 'User ID', 'none')}"></th>
+          </th:block>
+          <th>Photos</th>
+          <th:block class="hideable-column">
+            <th th:replace="~{fragments :: column_link('email', 'Email', 'none')}"></th>
+          </th:block>
+          <th:block class="hideable-column">
+            <th th:replace="~{fragments :: column_link('firstName', 'First Name', 'none')}"></th>
+          </th:block>
+          <th:block class="hideable-column">
+            <th th:replace="~{fragments :: column_link('lastName', 'Last Name', 'none')}"></th>
+          </th:block>
+          <th>Roles</th>
+          <th:block class="hideable-column">
+            <th th:replace="~{fragments :: column_link('createdAt', 'Created At', 'none')}"></th>
+          </th:block>
+          <th>Enabled</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="user: ${listUsers}">
+          <td>[[${ user.id }]]</td>
+          <td>
+            <span th:if="${user.photos == null}" class="fa-solid fa-image-portrait fa-3x icon-silver"></span>
+            <img th:unless="${user.photos == null}" th:src="@{${user.getPhotosImagePath}}" alt="" style="width: 100px;"/>
+          </td>
+          <td>[[${ user.email }]]</td>
+          <td>[[${ user.firstName }]]</td>
+          <td>[[${ user.lastName }]]</td>
+          <td>[[${ user.roles }]]</td>
+          <td>[[${#dates.format(user.createdAt, 'dd-MM-yyyy HH:mm:ss')}]]</td>
+          <td>
+            <div th:replace="~{fragments :: status(${user.enabled}, 'user', '/users/' + ${user.id})}"></div>
+          </td>
+          <td>
+            <div th:replace="~{fragments :: edit('user', '/users/edit/' + ${user.id})}"></div>
+            &nbsp;
+            <div th:replace="~{fragments :: delete('user', ${user.id}, '/users/delete/' + ${user.id}, true)}"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="less-details">
+    <div th:each="user : ${listUsers}" class="row m-1">
+      <div class="col-4">
+        <span th:if="${user.photos == null}" class="fa-solid fa-image-portrait fa-3x icon-silver"></span>
+        <img th:unless="${user.photos == null}" th:src="@{${user.getPhotosImagePath}}" alt="" style="width: 100px;"/>
+      </div>
+      <div class="col-8">
+        <div>[[${user.fullName}]]</div>
+        <div>[[${user.roles}]]</div>
+        <div class="mt-2">
+          <a th:href="@{'/users/edit/' + ${user.id}}"><i class="fa-solid fa-pen-to-square fa-2x icon-green"></i></a>
+          &nbsp;
+          <a class="link-delete" th:entityId="${user.id}" th:href="@{'/users/delete/' + ${user.id}}"><i class="fa-solid fa-trash fa-2x icon-dark"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="~{fragments :: pagination('users')}"></div>
+
+</div>
+
+<div th:replace="~{modal_fragments :: confirm_modal}"></div>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+</body>
+<script th:src="@{/js/common_list.js}"></script>
+<script>
+  let moduleURL = "[[@{/users}]]";
+
+  $(document).ready(function(){
+    $(".link-delete").on("click", function(e){
+      e.preventDefault();
+
+      showDeleteConfirmModal($(this), "users");
+    });
+  });
+</script>
+</html>

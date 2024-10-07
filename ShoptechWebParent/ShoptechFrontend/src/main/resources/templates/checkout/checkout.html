@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Shoptech', 'none')}"></head>
+<body>
+<div class="container-fluid">
+    <div th:replace="~{navigation :: header_menu}"></div>
+    <div th:replace="~{navigation :: search_nav}"></div>
+
+    <div class="text-center">
+        <h1>Checkout</h1>
+    </div>
+
+    <div class="row m-1">
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-header"><h5>Shipping Information</h5></div>
+                <div class="card-body">
+                    <p>
+                        <b>Shipping to: </b>[[${ shippingAddress }]] <br>
+                        <a th:href="@{/address_book(redirect=checkout)}">[Ship to another address]</a>
+                    </p>
+                    <p>
+                        <b>Days to deliver: </b>[[${ checkoutInfo.deliverDays }]] day(s)
+                    </p>
+                    <p>
+                        <b>Expected deliver date: </b>[[${ #dates.format(checkoutInfo.deliverDate, 'E, dd MM yyyy') }]]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mt-3 mb-3">
+                <div class="card-header"><h5>Payment Method</h5></div>
+                <div class="card-body">
+
+                    <div class="d-flex" style="gap: 50px;">
+                        <div th:if="${checkoutInfo.codSupported}" class="d-flex align-items-center" style="gap: 10px;">
+                            <input type="radio" name="paymentMethodRadio" id="radioCOD" data-method="cod">
+                                Cash on Delivery (COD)
+                            <i class="fa-regular fa-money-bill-1 icon-green fa-3x"></i>
+                        </div>
+                        <div class="d-flex align-items-center" style="gap: 10px;">
+                            <input type="radio" name="paymentMethodRadio" id="radioPaypal" data-method="paypal">
+                                Pay with Paypal
+                            <i class="fa-brands fa-paypal fa-3x" style="color: #74C0FC;"></i>
+                        </div>
+                        <div th:if="${customer.country.code == 'VN'}" class="d-flex align-items-center" style="gap: 10px;">
+                            <input type="radio" name="paymentMethodRadio" id="radioVNPAY" data-method="vnpay">
+                                Pay with VNPAY
+                            <i class="fa-regular fa-credit-card fa-3x"></i>
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <div class="d-none payment-method method-cod p-3">
+                            <form th:action="@{/place_order}" method="POST">
+                                <input type="hidden" name="paymentMethod" value="COD">
+                                <button type="submit" id="buttonSubmit" class="btn btn-primary" style="width:100%;">Place Order with COD</button>
+                            </form>
+                        </div>
+                        <div class="d-none payment-method method-paypal p-3">
+                            <div id="paypal-button-container"></div>
+                            <form th:action="@{/process_paypal_order}" method="POST" id="paypalForm">
+                                <input type="hidden" name="orderId" id="orderId">
+                                <input type="hidden" name="paymentMethod" value="PAYPAL">
+                            </form>
+                        </div>
+                        <div th:if="${customer.country.code == 'VN'}" class="d-none payment-method method-vnpay p-3">
+                            <form id="frmCreateOrder" th:action="@{/submitOrder}" method="POST">
+                                <input type="hidden" name="orderTotal" th:value="${checkoutInfo.paymentTotalFormat}">
+                                <button type="submit" class="btn btn-primary" style="width:100%;">Place Order with VNPAY</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header"><h5>Order Summary</h5></div>
+                <div class="card-body">
+                    <div>
+                        <table>
+                            <th:block th:each="item : ${cartItems}">
+                                <tr th:with="product=${item.product}">
+                                    <td>[[${ item.quantity }]] X &nbsp;&nbsp;</td>
+                                    <td width="70%">
+                                        <a th:href="@{'/p/' + ${product.alias}}" target="_blank">[[${ product.shortName }]]</a>
+                                        <br>
+                                        <small>Ship: <div th:replace="~{fragments :: format_currency(${item.shippingCost})}"></div></small>
+                                    </td>
+                                    <td>
+                                        <div th:replace="~{fragments :: format_currency(${item.subtotal})}"></div>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            <tr>
+                                <td colspan="3"><hr></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">Product Total:</div>
+                        <div class="col"><div th:replace="~{fragments :: format_currency(${checkoutInfo.productTotal})}"></div></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">Shipping Total:</div>
+                        <div class="col"><div th:replace="~{fragments :: format_currency(${checkoutInfo.shippingCostTotal})}"></div></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">Payment Total:</div>
+                        <div class="col"><b><div th:replace="~{fragments :: format_currency(${checkoutInfo.paymentTotal})}"></div></b></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: modal_dialog}"></div>
+    <div th:replace="~{navigation :: footer_menu}"></div>
+</div>
+<link href="https://merchant.vnpay.vn/Scripts/lib/vnpayframe.css" rel="stylesheet"/>
+<script src="https://merchant.vnpay.vn/Scripts/lib/vnpayframe.js"></script>
+<script src="https://merchant.vnpay.vn/Scripts/lib/openbutton.js"></script>
+<script th:src="@{https://www.paypal.com/sdk/js(client-id=${paypalClientId},currency=${currencyCode})}"></script>
+<script>
+    contextPath = "[[@{/}]]";
+    csrfHeaderName = "[[${_csrf.headerName}]]";
+    csrfValue = "[[${_csrf.token}]]";
+
+    $(document).ready(function(){
+        $("input[name='paymentMethodRadio']").on("click", function(){
+           let method = $(this).attr('data-method');
+           $(".payment-method").addClass("d-none");
+           $(".method-" + method).removeClass("d-none");
+       })
+    });
+
+    function validateOrder(orderId){
+        $("#orderId").val(orderId);
+        $("#paypalForm").submit();
+    }
+
+    paypal.Buttons({
+        style: {
+            color:  'blue',
+            shape:  'pill',
+            label:  'pay',
+            height: 40
+        },
+        enableStandardCardFields: true,
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                intent: "CAPTURE", // make payment immediately
+                payer: {
+                    name: {
+                        given_name: "[[${customer.firstName}]]",
+                        surname: "[[${customer.lastName}]]"
+                    },
+                    address: {
+                        address_line_1: "[[${customer.addressLine1}]]",
+                        address_line_2: "[[${customer.addressLine2}]]",
+                        // admin_area_1: "[[${customer.state}]]",
+                        admin_area_2: "[[${customer.city}]]",
+                        postal_code: "[[${customer.postalCode}]]",
+                        country_code: "[[${customer.country.code}]]"
+                    },
+                    email_address: "[[${customer.email}]]",
+                    phone: {
+                        phone_type: "MOBILE",
+                        phone_number: {
+                            national_number: "[[${customer.phoneNumber}]]"
+                        }
+                    }
+                },
+                purchase_units: [{
+                    amount: {
+                        value: "[[${checkoutInfo.paymentTotalFormat}]]",
+                        currency_code: "[[${currencyCode}]]"
+                    }
+                }],
+                application_context: {
+                    shipping_preference: "NO_SHIPPING"
+                }
+            });
+        },
+        onApprove: function(data, actions){
+            return actions.order.capture().then(function(details){
+                orderId = details.id;
+               validateOrder(orderId);
+            });
+        },
+        onCancel: function(data){
+        },
+        onError: function(err){
+            showErrorModal("Something wrong with your address information, so payment will not work.");
+        }
+    }).render('#paypal-button-container');
+</script>
+<script th:src="@{/js/common_modal.js}"></script>
+</body>
+</html>

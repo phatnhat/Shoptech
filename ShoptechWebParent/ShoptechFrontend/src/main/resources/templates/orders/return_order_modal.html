@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" class="modal fade" id="returnOrderModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="returnOrderModalTitle">Return Order</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form action="" onsubmit="return submitReturnOrderForm();">
+                <div class="modal-body">
+                   <div id="divReason">
+                       <div>Reason:</div>
+                       <div>
+                           <input type="radio" name="returnReason" value="I bought the wrong items" required>
+                           I bought the wrong items
+                       </div>
+                       <div>
+                           <input type="radio" name="returnReason" value="I received the wrong items">
+                           I received the wrong items
+                       </div>
+                       <div>
+                           <input type="radio" name="returnReason" value="The product was damaged/defective">
+                           The product was damaged/defective
+                       </div>
+                       <div>
+                           <input type="radio" name="returnReason" value="The product arrived too late">
+                           The product arrived too late
+                       </div>
+                       <div class="m-1">
+                           <textarea class="form-control" id="returnNote" cols="3" maxlength="120"
+                            placeholder="Additional Information"></textarea>
+                       </div>
+                   </div>
+                    <div id="divMessage" class="text-center">Return request has been sent</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" type="button" id="secondButton" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" type="submit" id="firstButton">Send Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

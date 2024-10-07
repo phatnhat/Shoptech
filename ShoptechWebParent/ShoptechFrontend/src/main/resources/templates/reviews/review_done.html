@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head th:replace="~{fragments :: page_head('Write Product Review', 'tag')}"></head>
+    <link rel="stylesheet" th:href="@{/star-rating/css/star-rating.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/star-rating/themes/krajee-svg/theme.css}" media="all">
+    <script th:src="@{/star-rating/js/star-rating.min.js}"></script>
+    <script th:src="@{/star-rating/themes/krajee-svg/theme.js}"></script>
+</head>
+<body>
+<div class="container-fluid text-center">
+    <div th:replace="~{navigation :: header_menu}"></div>
+    <div th:replace="~{navigation :: search_nav}"></div>
+
+    <div><h2>Write Product Review</h2></div>
+
+    <div>
+        <img th:src="@{${review.product.mainImagePath}}" style="height: 200px;">
+    </div>
+
+    <div>
+        <div><h4>[[${ review.product.name }]]</h4></div>
+        <div>&nbsp;</div>
+        <div>
+            <span class="h4 text-success">Your Review has been posted!</span>
+        </div>
+    </div>
+
+
+        <div class="border border-secondary rounded p-3">
+            <p>
+                <input type="text" th:value="${review.rating}"
+                    class="product-rating-star" dir="ltr" data-size="md">
+            </p>
+            <p>
+                <input type="text" th:value="${review.headline}" class="form-control" readonly>
+            </p>
+            <p>
+                <textarea rows="3" cols="10" class="form-control" readonly>[[${review.comment}]]</textarea>
+            </p>
+        </div>
+
+    <div>&nbsp;</div>
+
+    <div th:replace="~{navigation :: footer_menu}"></div>
+</div>
+<script>
+    $(".product-rating-star").rating({
+        displayOnly: true,
+        hoverOnClear: false,
+        showCaption: false,
+        theme: 'krajee-svg'
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:replace="~{fragments :: page_head(${pageTitle}, 'tag')}"></head>
+    <link rel="stylesheet" th:href="@{/star-rating/css/star-rating.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/star-rating/themes/krajee-svg/theme.css}" media="all">
+    <script th:src="@{/star-rating/js/star-rating.min.js}"></script>
+    <script th:src="@{/star-rating/themes/krajee-svg/theme.js}"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div th:replace="~{navigation :: header_menu}"></div>
+    <div th:replace="~{navigation :: search_nav}"></div>
+
+    <div th:if="${totalItems > 0}">
+        <h2>Search Results for '[[${ keyword }]]'</h2>
+    </div>
+    <div th:unless="${totalItems > 0}">
+        <h2>No match found for '[[${ keyword }]]'</h2>
+    </div>
+
+    <div class="row">
+        <th:block th:each="product : ${listResult}">
+            <div th:replace="~{products/product_fragment :: content}"></div>
+        </th:block>
+    </div>
+
+    <div th:replace="~{fragments :: pagination('/search', 'product')}"></div>
+    <div th:replace="~{navigation :: footer_menu}"></div>
+</div>
+<script>
+    $(".product-detail-rating-star").rating({
+        displayOnly: true,
+        hoverOnClera: false,
+        showCaption: false,
+        theme: 'krajee-svg'
+    });
+</script>
+</body>
+</html>

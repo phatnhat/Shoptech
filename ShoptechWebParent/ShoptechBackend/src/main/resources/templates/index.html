@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments :: page_head('Home - Shopme Admin', 'none')}"></head>
+<body>
+    <div class="container-fluid">
+        <div th:replace="~{navigation :: menu}"></div>
+        <div>
+            <h1>Shopme Admin Control Panel</h1>
+            Welcome
+            <a sec:authentication="principal.fullName"
+               th:href="@{/account}"></a>
+            &nbsp;
+            <span sec:authentication="principal.authorities"></span>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>
